@@ -7,13 +7,14 @@ pub struct App {
     gl: GlGraphics,
     lines: Vec<line::Line>,
     points: Vec<[f64; 2]>,
+    data: Vec<Vec<[u8; 3]>>,
 }
 
 impl App {
-    pub fn new(gl: glutin_window::OpenGL, width: f64, height: f64) -> App {
+    pub fn new(gl: glutin_window::OpenGL, width: u32, height: u32, data: Vec<Vec<[u8; 3]>>) -> App {
         let mut line = 
             line::Line::new(
-                [width / 2., height / 2.], 75., 0., 1., 0
+                [(width / 2) as f64, (height / 2) as f64], 75., 0., 1., 0
                 );
 
         line.grow(10);
@@ -22,7 +23,30 @@ impl App {
             gl: GlGraphics::new(gl),
             lines: vec![ line ],
             points: vec![ end ],
+            data: data
         }
+    }
+
+    pub fn draw_data(&mut self, args: &RenderArgs) {
+        use graphics::*;
+        const BLACK: [f32; 4] = [0.0, 0.0, 0.0, 1.0];
+        const WHITE: [f32; 4] = [255.0, 255.0, 255.0, 1.0];
+
+        let data = &self.data;
+        self.gl.draw(args.viewport(), |c, gl| {
+            clear(BLACK, gl);
+            let rect = [0., 0., 1., 1.];
+
+            for x in 0..data.len() {
+                for y in 0..data[x].len() {
+                    let transform = c.transform.trans(x as f64, y as f64);
+                    let point = data[x][y];
+                    let color: [f32; 4] = [point[0] as f32, point[1] as f32, point[2] as f32, 1.];
+                    rectangle(color, rect, transform, gl);
+                }
+            }
+        });
+
     }
 
     pub fn render(&mut self, args: &RenderArgs) {

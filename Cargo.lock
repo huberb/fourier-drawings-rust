@@ -252,6 +252,7 @@ checksum = "52ba6eb47c2131e784a38b726eb54c1e1484904f013e576a25354d0124161af6"
 name = "drawing"
 version = "0.1.0"
 dependencies = [
+ "image",
  "piston",
  "piston2d-graphics",
  "piston2d-opengl_graphics",
