@@ -40,11 +40,10 @@ impl Fourier {
 
         let mut circles = vec![];
         let range = data_points.len();
-        let data_len = data_points.len();
 
         for k in 0..range {
             let mut sum = Complex { real: 0., img: 0. };
-            for n in 0..data_len {
+            for n in 0..range {
                 let point = data_points[n];
                 let shift = (PI * 2.) * (k as f64) * (n as f64) / (range as f64);
                 let rotation = Complex { real: shift.cos(), img: -shift.sin() };
@@ -52,8 +51,8 @@ impl Fourier {
                 sum = sum + rotated;
             }
 
-            sum.real = sum.real / data_len as f64;
-            sum.img = sum.img / data_len as f64;
+            sum.real = sum.real / range as f64;
+            sum.img = sum.img / range as f64;
             let line_len = (sum.real * sum.real + sum.img * sum.img).sqrt();
             let angle = sum.img.atan2(sum.real);
 

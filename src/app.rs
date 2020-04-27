@@ -4,6 +4,11 @@ use opengl_graphics::{GlGraphics};
 pub mod fourier;
 use fourier::{Circle, Complex, Fourier};
 
+const BLACK: [f32; 4] = [0.0, 0.0, 0.0, 1.0];
+const RED: [f32; 4] = [1.0, 0.0, 0.0, 1.0];
+const GREEN: [f32; 4] = [0.0, 1.0, 0.0, 1.0];
+const WHITE: [f32; 4] = [1.0, 1.0, 1.0, 1.0];
+
 pub struct App {
     gl: GlGraphics,
     width: u32,
@@ -24,12 +29,21 @@ impl App {
         let center_x = (self.width / 2) as f64;
         let center_y = (self.width / 2) as f64;
 
-        let numbers = points.iter().map(|p| {
+        let numbers_iter = points.iter().map(|p| {
             fourier::Complex { 
                 real: p[0] as f64 - center_x, 
                 img: p[1] as f64 - center_y
             }
-        }).collect();
+        });
+
+        let numbers: Vec<_>;
+        if points.len() > 200 {
+            numbers = numbers_iter.step_by(points.len() / 200).collect();
+        } else {
+            numbers = numbers_iter.collect();
+        }
+
+        println!("circles count: {}", numbers.len());
 
         let circles = Fourier::fourier(&numbers);
 
@@ -41,8 +55,6 @@ impl App {
 
     pub fn draw_points(&mut self, points: &Vec<[u32; 2]>, args: &RenderArgs) {
         use graphics::*;
-
-        const WHITE: [f32; 4] = [1.0, 1.0, 1.0, 1.0];
 
         self.gl.draw(args.viewport(), |c, gl| {
             let mut last_x = points[0][0] as f64;
@@ -60,11 +72,6 @@ impl App {
 
     pub fn render(&mut self, args: &RenderArgs) {
         use graphics::*;
-
-        const BLACK: [f32; 4] = [0.0, 0.0, 0.0, 1.0];
-        const RED: [f32; 4] = [1.0, 0.0, 0.0, 1.0];
-        const GREEN: [f32; 4] = [0.0, 1.0, 0.0, 1.0];
-        const WHITE: [f32; 4] = [1.0, 1.0, 1.0, 1.0];
 
         let circles = &self.circles;
         let points = &self.points;
@@ -100,7 +107,7 @@ impl App {
                 line_from_to(GREEN, 1., [x, y], [last_x, last_y], c.transform, gl);
                 let rect = [0., 0., circle.amp * 2., circle.amp * 2.];
                 let offset = c.transform.trans(x - circle.amp, y - circle.amp);
-                circle_arc(RED, 0.3, 0., 3.14 * 2., rect, offset, gl);
+                circle_arc(RED, 1., 0., 3.14 * 2., rect, offset, gl);
             }
 
         });
