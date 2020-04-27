@@ -21,6 +21,10 @@ fn main() {
     let mut drawing = false;
     let mut points = reader::Reader::read(String::from("./note.svg"));
 
+    println!("Starting window..");
+    println!("draw with mouse");
+    println!("reset with space");
+
     let mut window: Window = WindowSettings::new("circles", [width, height])
         .graphics_api(opengl)
         .exit_on_esc(true)
@@ -54,6 +58,13 @@ fn main() {
             drawing = false;
             app.start(&points);
             points = vec![];
+        }
+
+        if let Some(Button::Keyboard(key)) = e.press_args() {
+            if key == Key::Space {
+                points = reader::Reader::read(String::from("./note.svg"));
+                app.start(&points);
+            }
         }
 
         if drawing {

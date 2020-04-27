@@ -111,7 +111,9 @@ impl App {
             }
 
         });
-        self.points.push(fourier::Complex { real: last_x, img: last_y });
+        if points.len() <= self.length {
+            self.points.push(Complex { real: last_x, img: last_y });
+        }
     }
 
     pub fn update(&mut self, _args: &UpdateArgs) {
@@ -119,10 +121,6 @@ impl App {
         if self.length > 0 {
             let dt = two_pi / self.length as f64;
             self.time = self.time + dt;
-            if self.time > two_pi {
-                self.points = vec![];
-                self.time = 0.;
-            }
         }
     }
 }

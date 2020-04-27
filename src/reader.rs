@@ -36,8 +36,8 @@ impl Reader {
         for line in polylines {
             for pair in line {
                 numbers.push([
-                    ((pair.x - min_x) * 0.1) as u32 + 260,
-                    ((pair.y - min_y) * 0.1) as u32 + 200,
+                    ((pair.x - min_x) * 0.15) as u32 + 260,
+                    ((pair.y - min_y) * 0.15) as u32 + 100,
                 ])
             }
         }
