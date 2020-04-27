@@ -11,6 +11,7 @@ use piston::window::WindowSettings;
 use piston::input::*;
 
 mod app;
+mod reader;
 
 fn main() {
     let opengl = OpenGL::V3_2;
@@ -18,7 +19,7 @@ fn main() {
     let height = 750;
 
     let mut drawing = false;
-    let mut points = vec![];
+    let mut points = reader::Reader::read(String::from("./note.svg"));
 
     let mut window: Window = WindowSettings::new("circles", [width, height])
         .graphics_api(opengl)
@@ -27,6 +28,7 @@ fn main() {
         .unwrap();
 
     let mut app = app::App::new(opengl, width, height);
+    app.start(&points);
 
     let mut events = Events::new(EventSettings::new());
     while let Some(e) = events.next(&mut window) {
@@ -44,6 +46,7 @@ fn main() {
         }
 
         if let Some(Button::Mouse(_button)) = e.press_args() {
+            points = vec![];
             drawing = true;
         }
 
